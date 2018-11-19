@@ -36,43 +36,26 @@ def parseSlow(SQLTEXT, DBName, CtsStartTime):
     #查询数据库id,将计算的结果写入数据库，同时判断SQL类型是否存在，并最终更新时间
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
-    dbids = dbdml.update_params("select dbid from dbinfo where dbname= %s", DBName)
-    hashifexists = dbdml.update_params("select count(*) from slowagginfo where hashvalue=%s", hashvalues)
-    dbmameid = dbids
-    sqlstatus = 0
+    dbids = dbdml.select_params("select dbid from dbinfo where dbname= %s", DBName)
+    hashifexists = dbdml.select_params("select count(*) from slowagginfo where hashvalue=%s", hashvalues)
+    ifhash = list(hashifexists[0])
     lasttime = CtsStartTime
-    if hashifexists == 1:
+    dbnameid = dbids
+    sqlstatus = 0
+    if ifhash[0] == 0:
         #数据存在直接修改lasttime
         modifytime = dbdml.update_params("update slowagginfo set lasttime = %s where hashvalue=%s", (lasttime, hashvalues))
     else:
         #不存在直接写库
-        insertsql = "insert into slowagginfo(%s,%s,%s,%s,%s,%s) values (dbnameid, DBName, sqltext, sqlstatus, hashvalues, lasttime)"
+        insertsql = "insert into slowagginfo(dbnameid, dbname, sqltext, sqlstatus, hashvalue, lasttime) values(%s,%s,%s,%s,%s,%s)" % \
+                    (dbnameid, DBName, sqltext, sqlstatus, hashvalues, lasttime)
         dbdml.update(insertsql)
     return hashvalues
 
 #slowlog详细信息入库
-def slowinfotodb(HostAddress,QueryTimes,LockTimes,ParseRowCounts,ReturnRowCounts,ExecutionStartTime,DBName,SQLText,hashvalue):
-    insertsql = 'insert into monitor.slowlogdetail(%s,%s.%s,%s,%s,%s,%s,%s,%s) values % (HostAddress, QueryTimes, LockTimes, ParseRowCounts, \
-    ReturnRowCounts, ExecutionStartTime, DBName, SQLText, hashvalue);'
+def slowinfotodb(HostAddress,QueryTimes,LockTimes,ParseRowCounts,ReturnRowCounts,CtsStartTime,DBName,SQLText,hashvalue):
+    insertsql = "insert into monitor.slowlogdetail(ipaddr,querytime,locktime,parserowcount,returnrowcount,execstarttime,dbname,sqltext,hashvalue) \
+    values(%s,%s.%s,%s,%s,%s,%s,%s,%s)" % (HostAddress, QueryTimes, LockTimes, ParseRowCounts, ReturnRowCounts, CtsStartTime, DBName, SQLText, hashvalue)
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
     dbdml.update(insertsql)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

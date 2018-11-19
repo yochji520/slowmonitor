@@ -35,6 +35,18 @@ class dbDml(object):
                 logging.info("query database exception, %s:" % e)
         return rows
 
+    def select_params(self, sql, params):
+        rows = ''
+        if(self._conn):
+            try:
+                self._cursor.execute(sql, params)
+                rows = self._cursor.fetchall()
+            except Exception as e:
+                rows = False
+                print("query database exception, %s:" % e)
+                logging.info("query database exception, %s:" % e)
+        return rows
+
 #update():用于处理不带参数的所有数据更新;
     def update(self, sql):
         if (self._conn):
@@ -63,5 +75,5 @@ class dbDml(object):
                 self._conn.commit()
             except Exception as e:
                 print("MySQL Exception %s:" % e)
-        return flag
+            return flag
 
