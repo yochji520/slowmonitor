@@ -14,9 +14,9 @@ accessKeyId = 'LTAI7CW0wse6REbg'
 accessKeySecret = 'tEGeXXpYMPx5Rqmv9W4y1OBlXsJPcJ'
 regionid = 'cn-hangzhou'
 
-#计算起始的UTC时间
-utcbegintime = (datetime.datetime.now()-datetime.timedelta(hours=3)).strftime("%Y-%m-%dT%H:%MZ")
-utcendtime = (datetime.datetime.now() - datetime.timedelta(hours=1)).strftime("%Y-%m-%dT%H:%MZ")
+#计算起始-->UTC时间
+utcbegintime = (datetime.datetime.now()-datetime.timedelta(hours=18)).strftime("%Y-%m-%dT%H:%MZ")
+utcendtime = (datetime.datetime.now() - datetime.timedelta(hours=15)).strftime("%Y-%m-%dT%H:%MZ")
 
 #获取实例信息
 def getinstance():

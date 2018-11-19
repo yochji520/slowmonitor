@@ -36,29 +36,23 @@ def parseSlow(SQLTEXT, DBName, CtsStartTime):
     #查询数据库id,将计算的结果写入数据库，同时判断SQL类型是否存在，并最终更新时间
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
-    getdbid = "select dbid from dbinfo where dbname='%s' % DBName"
-    hashisexists = "select count(*) from slowagginfo where hashvalue='%s' % hashvalue"
-    dbids = dbdml.select(getdbid)
-    hashifexists = dbdml.select(hashisexists)
-    hashval = hashifexists[1]
-    dbnameid = dbids[1]
-    DBName = DBName
+    dbids = dbdml.update_params("select dbid from dbinfo where dbname= %s", DBName)
+    hashifexists = dbdml.update_params("select count(*) from slowagginfo where hashvalue=%s", hashvalues)
+    dbmameid = dbids
     sqlstatus = 0
     lasttime = CtsStartTime
-    print(1111)
-    if hashval == 1:
+    if hashifexists == 1:
         #数据存在直接修改lasttime
-        modifytime = "update slowagginfo set lasttime = '%s' where hashvalue='%s' %,% lasttime, hashvalues"
-        dbdml.update(modifytime)
+        modifytime = dbdml.update_params("update slowagginfo set lasttime = %s where hashvalue=%s", (lasttime, hashvalues))
     else:
         #不存在直接写库
-        insertsql = "insert into slowagginfo(%s,%s,%s,%s,%s,%s) values(dbnameid, DBName, sqltext, sqlstatus, hashvalues, lasttime)"
+        insertsql = "insert into slowagginfo(%s,%s,%s,%s,%s,%s) values (dbnameid, DBName, sqltext, sqlstatus, hashvalues, lasttime)"
         dbdml.update(insertsql)
     return hashvalues
 
 #slowlog详细信息入库
 def slowinfotodb(HostAddress,QueryTimes,LockTimes,ParseRowCounts,ReturnRowCounts,ExecutionStartTime,DBName,SQLText,hashvalue):
-    insertsql = 'insert into monitor.slowlogdetail(%s,%s.%s,%s,%s,%s,%s,%s,%s) values(HostAddress, QueryTimes, LockTimes, ParseRowCounts, \
+    insertsql = 'insert into monitor.slowlogdetail(%s,%s.%s,%s,%s,%s,%s,%s,%s) values % (HostAddress, QueryTimes, LockTimes, ParseRowCounts, \
     ReturnRowCounts, ExecutionStartTime, DBName, SQLText, hashvalue);'
     db_dict = read_cof()
     dbdml = dbDml(db_dict)

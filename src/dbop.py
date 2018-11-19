@@ -37,14 +37,11 @@ class dbDml(object):
 
 #update():用于处理不带参数的所有数据更新;
     def update(self, sql):
-        flag = False
         if (self._conn):
             try:
-                self._cursor.execute(sql)
+                flag = self._cursor.execute(sql)
                 self._conn.commit()
-                flag = True
             except Exception as e:
-                flag = False
                 print("update database exception, %s:" % e)
                 logging.info("MySQL Exception %s:" % e)
         return flag
@@ -60,14 +57,11 @@ class dbDml(object):
                 print("close database exception, %s,%s,%s" % (e, type(self._cursor), type(self._conn)))
 
     def update_params(self, sql, params):
-        flag = False
         if (self._conn):
             try:
-                self._cursor.execute(sql, params)
+                flag = self._cursor.execute(sql, params)
                 self._conn.commit()
-                flag = True
             except Exception as e:
-                flag = False
                 print("MySQL Exception %s:" % e)
         return flag
 
