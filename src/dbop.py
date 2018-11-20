@@ -8,6 +8,8 @@
 import logging
 import pymysql
 
+
+#数据库操作（op）
 class dbDml(object):
     def __init__(self, db_dict):
         self._db_dict = db_dict
@@ -35,7 +37,8 @@ class dbDml(object):
                 logging.info("query database exception, %s:" % e)
         return rows
 
-    def select_params(self, sql, params):
+#带参数的查询
+    def select_params(self, sql, *params):
         rows = ''
         if(self._conn):
             try:
@@ -51,12 +54,20 @@ class dbDml(object):
     def update(self, sql):
         if (self._conn):
             try:
-                flag = self._cursor.execute(sql)
+                self._cursor.execute(sql)
                 self._conn.commit()
             except Exception as e:
                 print("update database exception, %s:" % e)
                 logging.info("MySQL Exception %s:" % e)
-        return flag
+
+# 改参数的更新
+    def update_params(self, sql, *params):
+        if (self._conn):
+            try:
+                self._cursor.execute(sql, params)
+                self._conn.commit()
+            except Exception as e:
+                print("MySQL Exception %s:" % e)
 
     def close(self):
         if (self._conn):
@@ -68,12 +79,5 @@ class dbDml(object):
             except Exception as e:
                 print("close database exception, %s,%s,%s" % (e, type(self._cursor), type(self._conn)))
 
-    def update_params(self, sql, params):
-        if (self._conn):
-            try:
-                flag = self._cursor.execute(sql, params)
-                self._conn.commit()
-            except Exception as e:
-                print("MySQL Exception %s:" % e)
-            return flag
+
 

@@ -49,7 +49,6 @@ class slowLog(object):
                 break
             else:
                 hashvalue = parseSlow(SQLText, DBName, CtsStartTime)#返回hashvalue带入slowinfotodb函数，将数据写入slowlog
-                print(hashvalue)
                 slowinfotodb(HostAddress, QueryTimes, LockTimes, ParseRowCounts, ReturnRowCounts, CtsStartTime\
                              , DBName, SQLText, hashvalue)
 
