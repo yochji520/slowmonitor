@@ -1,16 +1,12 @@
 #!/bin/env python3
-# -*- coding: UTF-8 -*-
 # author:ycj
 # email:yochji520@163.com
-# filename:
 # description:解析处理slowlog
-
 
 from src.getconf import *
 from src.dbop import *
 from src.hashforstr import hashForString
 import re
-
 
 # 解析替换SQL，并计算出一致性hash值，解析顺序：like-->in-->字符串-->时间-->日期-->数字
 def parseSlow(SQLTEXT, DBName, CtsStartTime):

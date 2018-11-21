@@ -5,10 +5,10 @@
 #filename:
 #description:封装的db_op
 
-import logging
 import pymysql
+from src.logs import *
 
-
+log = LogtoLog().getlog()
 #数据库操作（op）
 class dbDml(object):
     def __init__(self, db_dict):
@@ -20,8 +20,8 @@ class dbDml(object):
     def getconn(self):
         try:
             conn = pymysql.connect(**self._db_dict)
-        except Exception as e:
-            print("connect database failed, %s:" % e)
+        except Exception as err:
+            log.warning("connect database failed, %s:" % err)
         return conn
 
 #数据查询
@@ -31,10 +31,9 @@ class dbDml(object):
             try:
                 self._cursor.execute(sql)
                 rows = self._cursor.fetchall()
-            except Exception as e:
+            except Exception as err:
                 rows = False
-                print("query database exception, %s:" % e)
-                logging.info("query database exception, %s:" % e)
+                log.warning("query database exception, %s:" % err)
         return rows
 
 #带参数的查询
@@ -44,10 +43,9 @@ class dbDml(object):
             try:
                 self._cursor.execute(sql, params)
                 rows = self._cursor.fetchall()
-            except Exception as e:
+            except Exception as err:
                 rows = False
-                print("query database exception, %s:" % e)
-                logging.info("query database exception, %s:" % e)
+                log.warning("query database exception, %s:" % err)
         return rows
 
 #update():用于处理不带参数的所有数据更新;
@@ -56,9 +54,8 @@ class dbDml(object):
             try:
                 self._cursor.execute(sql)
                 self._conn.commit()
-            except Exception as e:
-                print("update database exception, %s:" % e)
-                logging.info("MySQL Exception %s:" % e)
+            except Exception as err:
+                log.warning("MySQL Exception %s:" % err)
 
 # 改参数的更新
     def update_params(self, sql, *params):
@@ -66,8 +63,8 @@ class dbDml(object):
             try:
                 self._cursor.execute(sql, params)
                 self._conn.commit()
-            except Exception as e:
-                print("MySQL Exception %s:" % e)
+            except Exception as err:
+                log.warning("MySQL Exception %s:" % err)
 
     def close(self):
         if (self._conn):
@@ -76,8 +73,6 @@ class dbDml(object):
                     self._cursor.close()
                 if(type(self._conn) == 'object'):
                     self._conn.close()
-            except Exception as e:
-                print("close database exception, %s,%s,%s" % (e, type(self._cursor), type(self._conn)))
-
-
+            except Exception as err:
+                log.warning("close database exception, %s,%s,%s" % (err, type(self._cursor), type(self._conn)))
 

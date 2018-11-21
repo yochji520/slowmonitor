@@ -23,8 +23,8 @@ def getinstance():
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
     getinstanceid = 'select instancename from monitor.dbinstance'
-    rowobject = dbdml.select(getinstanceid)
-    return rowobject
+    rows = dbdml.select(getinstanceid)
+    return rows
 
 if __name__  ==  "__main__":
     alisdkauth = alisdkauth(accessKeyId, accessKeySecret, regionid)
@@ -34,3 +34,6 @@ if __name__  ==  "__main__":
         instanceid = instance[0]
         getslow = slowLog(instanceid, utcbegintime, utcendtime, clt)
         getslow.getSlowLogs()
+
+
+

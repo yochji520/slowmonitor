@@ -4,29 +4,47 @@
 #filename:
 #description:封装日志logging
 
-import logging
 import time
+import logging
 
-logtime = time.strftime('%Y%m%d', time.localtime(time.time()))
+from pip import logger
 
-class Log(object):
-    def __init__(self, name):
-        self.path = "../../log"
-        self.filename = self.path + 'running' +logtime + '.log'
-        self.name = name
-        self.logger = logging.getLogger(self.name)
+
+class LogtoLog(object):
+    def __init__(self, logger=None):
+        '''
+            指定保存日志的文件路径，日志级别，以及调用文件
+            将日志存入到指定的文件中
+        '''
+        # 创建一个logger
+        self.logger = logging.getLogger(logger)
         self.logger.setLevel(logging.INFO)
-        #定义日志文件中格式
-        self.formatter = logging.Formatter('%(asctime)s - %(levelname)s -   %(name)s[line:%(lineno)d] - %(message)s')
-        self.fh.setFormatter(self.formatter)
-        self.logger.addHandler(self.fh)
+        # 创建一个handler，用于写入日志文件
+        self.log_time = time.strftime("%Y_%m_%d_")
+        self.log_path = "../log/"
+        self.log_name = self.log_path + self.log_time + 'running.log'
 
-class customError(Exception):
-     def __init__(self, msg=None):
-          self.msg = msg
-     def __str__(self):
-           if self.msg:
-                  return self.msg
-           else:
-                  return u"某个不符合条件的语法出了问题"
+        fh = logging.FileHandler(self.log_name, 'a', encoding='utf-8')
+        fh.setLevel(logging.INFO)
+
+        # 再创建一个handler，用于输出到控制台
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+
+        # 定义handler的输出格式
+        formatter = logging.Formatter('[%(asctime)s] %(filename)s-->%(funcName)s line:%(lineno)d [%(levelname)s]%(message)s')
+        fh.setFormatter(formatter)
+        ch.setFormatter(formatter)
+
+        # 给logger添加handler
+        self.logger.addHandler(fh)
+        self.logger.addHandler(ch)
+
+        # 关闭打开的文件
+        fh.close()
+        ch.close()
+
+    def getlog(self):
+        return self.logger
+
 

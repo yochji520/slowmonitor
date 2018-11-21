@@ -1,8 +1,4 @@
 #!/usr/bin/python3
-#-*- coding: UTF-8 -*- 
-#@Author:
-#@Time:
-#@File:
 
 import smtplib
 from email.mime.text import MIMEText
@@ -18,7 +14,6 @@ import datetime
 mail_host = "smtp.ym.163.com"
 sender_user = "youchuanjiang@wanbei.tv"
 user_pass = "wuhuan42@123.A"
-
 yesterday = (datetime.datetime.now()-datetime.timedelta(hours=11)).strftime("%Y-%m-%d")
 
 #发送邮件
@@ -35,21 +30,19 @@ def sendmail():
     rows = dbdml.select("select dbname,sqltext,max(lasttime),count(hashvalue) as sqlcount from \
         (select a.dbname,b.sqltext,b.lasttime,c.hashvalue from dbinfo a left join slowagginfo b on\
         a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue where b.sqlstatus=0) a group by hashvalue order by count(hashvalue) desc ;")
-    DBNAME = []
-    SQL = []
-    LASTTIME = []
-    NUM = []
+    dbname = []
+    sqltext = []
+    lasttime = []
+    num = []
     for row in rows:
-        DBNAME.append(row[0])
-        SQL.append(row[1])
-        LASTTIME.append(row[2])
-        NUM.append(row[3])
-
+        dbname.append(row[0])
+        sqltext.append(row[1])
+        lasttime.append(row[2])
+        num.append(row[3])
     #生成附件
     execlfile = contentexecl(rows, yesterday)
-
     #生成邮件内容
-    rlist = pd.DataFrame({'DBNAME': DBNAME, 'SQL': SQL, 'LASTTIME': LASTTIME, 'SQLCOUNT': NUM})
+    rlist = pd.DataFrame({'DBNAME': dbname, 'SQL': sqltext, 'LASTTIME': lasttime, 'SQLCOUNT': num})
     tr = ''
     for r in range(len(rlist)):
         tr = tr + """
@@ -59,7 +52,6 @@ def sendmail():
           <td width="700">""" + str(rlist.iloc[r][2]) + """</td>
           <td width="50" align="center">""" + str(rlist.iloc[r][3]) + """</td>
         </tr>"""
-
     Text = """
             <span style="font-size: 20px">""" + yesterday + "慢SQL统计情况" + """</span>
             <table style="font-size: 12px"  width="1000" border="1" cellspacing="0" cellpadding="1" text-align="center">
@@ -72,17 +64,17 @@ def sendmail():
             </table>
             <p style="color: red; font-size: 12px">""" + "说明：列表按统计NUM降序排序，返回执行时间最慢SQL前十，全部信息内容请查看附件" + """</p>    
         """
-    #创建一个带附件的实例
-    message = MIMEMultipart()
-    message['From'] = Header("youchuanjiang@wanbei.tv", 'utf-8')
     for recename in receivers:
+        # 创建一个带附件的实例
+        message = MIMEMultipart()
+        message['From'] = Header("youchuanjiang@wanbei.tv", 'utf-8')
         message['To'] = Header(recename, 'utf-8')
         subject = 'SLOWLOG'
         message['Subject'] = Header(subject, 'utf-8')
         #构建文件正文
         message.attach(MIMEText(Text, 'html', 'utf-8'))
         # 构造附件1，传送当前目录下的execlfile文件
-        att1 = MIMEText(open(execlfile, 'rb').read(), 'base64', 'utf-8')
+        att1 = MIMEText(open(r'../tmp/' + execlfile, 'rb').read(), 'base64', 'utf-8')
         att1["Content-Type"] = 'application/octet-stream'
         # 这里的filename可以任意写，写什么名字，邮件中显示什么名字
         att1["Content-Disposition"] = 'attachment; filename=' + execlfile

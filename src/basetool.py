@@ -18,7 +18,3 @@ def utc_to_local(utc_time_str, utc_format='%Y-%m-%dT%H:%M:%SZ'):
     time_str = local_dt.strftime(local_format)
     return time_str
 
-
-#封装日志
-def format_log(loginfo):
-    return 1

@@ -6,13 +6,20 @@
 #description:
 
 import configparser
+from src.logs import *
 
 CONFNAME = r"/app/slowmonitor/conf/db.conf"
 
 #读取配置文件，并以字典形式返回
+
 def read_cof():
+    log = LogtoLog().getlog()
     conf = configparser.ConfigParser()
-    conf.read(CONFNAME)
+    try:
+        conf = configparser.ConfigParser()
+        conf.read(CONFNAME)
+    except IOError as err:
+        log.error("文件不存在，或者权限不足!!! " + str(err))
     kvs = conf.items("db1")
     db_host = kvs[2][1]
     db_user = kvs[0][1]

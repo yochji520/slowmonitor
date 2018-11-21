@@ -8,19 +8,17 @@ import xlwt
 
 basename = "slowlog-"
 
-'''
-dateFormat = xlwt.XFStyle()
-dateFormat.num_format_str = 'yyyy/mm/dd'
-worksheet.write(0, 0, dt.date.today(),dateFormat)
-'''
-
 #生成slowlog的exlec文件
 def contentexecl(rows, yesterday):
     wbk = xlwt.Workbook()
     sheet = wbk.add_sheet('Sheet1', cell_overwrite_ok=True)
+    #row0 = [u'数据库', u'最近更新时间', u'SQL语句', u'SQL统计']
+    #sheet1 = a(sheet, row0)
+    #写数据
     for i in range(len(rows)):
         for j in range(len(rows[i])):
             sheet.write(i, j, str(rows[i][j]))
     execlfile = basename + str(yesterday) + '.xls'
-    wbk.save(execlfile)
+    wbk.save(r"../tmp/" + execlfile)
     return execlfile
+
