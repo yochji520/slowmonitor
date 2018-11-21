@@ -42,11 +42,11 @@ class slowLog(object):
             skipcondition2 = "dumper"
             skipcondition3 = "data_stat"
             if skipcondition1 in SQLText:
-                break
+                continue
             elif skipcondition2 in HostAddress:
-                break
+                continue
             elif skipcondition3 in DBName:
-                break
+                continue
             else:
                 hashvalue = parseSlow(SQLText, DBName, CtsStartTime)#返回hashvalue带入slowinfotodb函数，将数据写入slowlog
                 slowinfotodb(HostAddress, QueryTimes, LockTimes, ParseRowCounts, ReturnRowCounts, CtsStartTime\

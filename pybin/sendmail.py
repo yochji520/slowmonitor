@@ -34,7 +34,7 @@ def sendmail():
     #统计SQL出现的次数，以出现次数排序（降序）显示前10条
     rows = dbdml.select("select dbname,sqltext,max(lasttime),count(hashvalue) as sqlcount from \
         (select a.dbname,b.sqltext,b.lasttime,c.hashvalue from dbinfo a left join slowagginfo b on\
-        a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue) a group by hashvalue;")
+        a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue where b.sqlstatus=0) a group by hashvalue order by count(hashvalue) desc ;")
     DBNAME = []
     SQL = []
     LASTTIME = []
