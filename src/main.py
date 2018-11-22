@@ -22,7 +22,7 @@ utcendtime = (datetime.datetime.now() - datetime.timedelta(hours=24)).strftime("
 def getinstance():
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
-    getinstanceid = 'select instancename from monitor.dbinstance'
+    getinstanceid = 'select instancename from monitor_bak.dbinstance'
     rows = dbdml.select(getinstanceid)
     return rows
 

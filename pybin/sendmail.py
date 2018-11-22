@@ -21,28 +21,28 @@ def sendmail():
     # 获取邮件接收人
     db_dict = read_cof()
     dbdml = dbDml(db_dict)
-    emails = dbdml.select("select email from monitor.user")
+    emails = dbdml.select("select email from monitor_bak.user")
     receivers = []
     for email in emails:
         receivers.append(email[0])
 
     #统计SQL出现的次数，以出现次数排序（降序）显示前10条
-    rows = dbdml.select("select dbname,sqltext,max(lasttime),count(hashvalue) as sqlcount from \
+    rows = dbdml.select("select dbname,max(lasttime),sqltext,count(hashvalue) as sqlcount from \
         (select a.dbname,b.sqltext,b.lasttime,c.hashvalue from dbinfo a left join slowagginfo b on\
         a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue where b.sqlstatus=0) a group by hashvalue order by count(hashvalue) desc ;")
     dbname = []
-    sqltext = []
     lasttime = []
+    sqltext = []
     num = []
     for row in rows:
         dbname.append(row[0])
-        sqltext.append(row[1])
-        lasttime.append(row[2])
+        lasttime.append(row[1])
+        sqltext.append(row[2])
         num.append(row[3])
     #生成附件
     execlfile = contentexecl(rows, yesterday)
     #生成邮件内容
-    rlist = pd.DataFrame({'DBNAME': dbname, 'SQL': sqltext, 'LASTTIME': lasttime, 'SQLCOUNT': num})
+    rlist = pd.DataFrame({'DBNAME': dbname, 'LASTTIME': lasttime, 'SQL': sqltext, 'SQLCOUNT': num})
     tr = ''
     for r in range(len(rlist)):
         tr = tr + """
@@ -73,7 +73,7 @@ def sendmail():
         message['Subject'] = Header(subject, 'utf-8')
         #构建文件正文
         message.attach(MIMEText(Text, 'html', 'utf-8'))
-        # 构造附件1，传送当前目录下的execlfile文件
+        # 构建附件1，传送当前目录下的execlfile文件
         att1 = MIMEText(open(r'../tmp/' + execlfile, 'rb').read(), 'base64', 'utf-8')
         att1["Content-Type"] = 'application/octet-stream'
         # 这里的filename可以任意写，写什么名字，邮件中显示什么名字

@@ -55,7 +55,7 @@ def parseSlow(SQLTEXT, DBName, CtsStartTime):
 # slowlog详细信息入库
 def slowinfotodb(HostAddress, QueryTimes, LockTimes, ParseRowCounts, ReturnRowCounts, CtsStartTime, DBName, SQLText,
                  hashvalue):
-    insertsql = "insert into monitor.slowlogdetail(ipaddr,querytime,locktime,parserowcount,returnrowcount,execstarttime,dbname,sqltext,hashvalue) \
+    insertsql = "insert into monitor_bak.slowlogdetail(ipaddr,querytime,locktime,parserowcount,returnrowcount,execstarttime,dbname,sqltext,hashvalue) \
     values('%s','%s','%s',%d,%d,'%s','%s',\"%s\",'%s')" % (
     HostAddress, QueryTimes, LockTimes, ParseRowCounts, ReturnRowCounts, CtsStartTime, DBName, SQLText, hashvalue)
     db_dict = read_cof()

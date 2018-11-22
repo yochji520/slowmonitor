@@ -1,3 +1,4 @@
-[2018-11-21 16:46:48,693] main.py-><module> line:32 [INFO]11111
-[2018-11-21 16:47:28,962] main.py-><module> line:32 [INFO]11111
-[2018-11-21 16:47:42,146] main.py-><module> line:32 [INFO]11111
+[2018-11-21 17:12:16,536] dbop.py-->getconn line:24 [WARNING]connect database failed, (1045, "Access denied for user 'dba'@'188.188.3.104' (using password: YES)"):
+[2018-11-21 17:12:16,536] dbop.py-->getconn line:24 [WARNING]connect database failed, (1045, "Access denied for user 'dba'@'188.188.3.104' (using password: YES)"):
+[2018-11-21 17:14:39,637] dbop.py-->getconn line:24 [WARNING]connect database failed, (1045, "Access denied for user 'dba'@'188.188.3.104' (using password: YES)"):
+[2018-11-21 17:14:39,637] dbop.py-->getconn line:24 [WARNING]connect database failed, (1045, "Access denied for user 'dba'@'188.188.3.104' (using password: YES)"):

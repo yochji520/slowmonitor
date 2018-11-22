@@ -18,6 +18,9 @@ def contentexecl(rows, yesterday):
     for i in range(len(rows)):
         for j in range(len(rows[i])):
             sheet.write(i, j, str(rows[i][j]))
+            #设置行宽
+            sheet.col(1).width = 5000
+            sheet.col(2).width = 24000
     execlfile = basename + str(yesterday) + '.xls'
     wbk.save(r"../tmp/" + execlfile)
     return execlfile
