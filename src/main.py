@@ -8,6 +8,7 @@
 import datetime
 from src.aliauth import *
 from src.getslowlog import *
+from pybin.sendmail import *
 
 #定义AcsClient信息
 accessKeyId = 'LTAI7CW0wse6REbg'
@@ -34,6 +35,6 @@ if __name__  ==  "__main__":
         instanceid = instance[0]
         getslow = slowLog(instanceid, utcbegintime, utcendtime, clt)
         getslow.getSlowLogs()
-
+    sendmail()
 
 

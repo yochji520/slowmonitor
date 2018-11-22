@@ -1,20 +1,26 @@
 #!/usr/bin/python3
 
 import smtplib
+import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.header import Header
 from src.getconf import read_cof
 from src.dbop import dbDml
 import pandas as pd
-from pybin.createexecl import contentexecl
-import datetime
+from src.createexecl import contentexecl
+from src.logs import *
+
 
 #mail账号
 mail_host = "smtp.ym.163.com"
 sender_user = "youchuanjiang@wanbei.tv"
 user_pass = "wuhuan42@123.A"
-yesterday = (datetime.datetime.now()-datetime.timedelta(hours=11)).strftime("%Y-%m-%d")
+#计算时间
+yesterday = (datetime.datetime.now()-datetime.timedelta(hours=2)).strftime("%Y-%m-%d")
+starttime=(datetime.datetime.now()-datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+endtime=datetime.datetime.now().strftime("%Y-%m-%d")
+
 
 #发送邮件
 def sendmail():
@@ -27,9 +33,11 @@ def sendmail():
         receivers.append(email[0])
 
     #统计SQL出现的次数，以出现次数排序（降序）显示前10条
-    rows = dbdml.select("select dbname,max(lasttime),sqltext,count(hashvalue) as sqlcount from \
-        (select a.dbname,b.sqltext,b.lasttime,c.hashvalue from dbinfo a left join slowagginfo b on\
-        a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue where b.sqlstatus=0) a group by hashvalue order by count(hashvalue) desc ;")
+    selectsql = "select dbname,max(lasttime),sqltext,count(hashvalue) as sqlcount from \
+        (select a.dbname,b.sqltext,b.lasttime,c.hashvalue from  dbinfo a left join slowagginfo b on\
+        a.dbid=b.dbnameid left join slowlogdetail c on b.hashvalue = c.hashvalue where c.execstarttime >= '%s' \
+        and c.execstarttime < '%s' and b.sqlstatus=0 ) a group by hashvalue order by count(hashvalue) desc limit 10 ;" % (starttime, endtime)
+    rows = dbdml.select(selectsql)
     dbname = []
     lasttime = []
     sqltext = []
@@ -80,13 +88,13 @@ def sendmail():
         att1["Content-Disposition"] = 'attachment; filename=' + execlfile
         message.attach(att1)
         try:
-            smtpObj = smtplib.SMTP()
-            smtpObj.connect(mail_host, 25)
+            smtpObj = smtplib.SMTP_SSL(mail_host)
             smtpObj.login(sender_user, user_pass)
             smtpObj.sendmail(sender_user, recename, message.as_string())
             print("邮件发送成功")
-        except Exception:
-            print("邮件发送失败")
+        except Exception as err:
+            log = LogtoLog().getlog()
+            log.warning("邮件发送失败" + str(err))
 
 if __name__=="__main__":
     sendmail()

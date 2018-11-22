@@ -39,13 +39,22 @@ class slowLog(object):
             SQLText = slowdata['SQLText']
             #判断是否跳过循环,包含SQL_NO_CACHE,dumper.data_stat的不记录
             skipcondition1 = "SQL_NO_CACHE"
-            skipcondition2 = "dumper"
-            skipcondition3 = "data_stat"
+            skipcondition2 = 'dumper'
+            skipcondition3 = 'stat_chess'
+            skipcondition4 = 'stat_agent'
+            skipcondition5 = 'stat'
+            skipcondition6 = "data_stat"
             if skipcondition1 in SQLText:
                 continue
             elif skipcondition2 in HostAddress:
                 continue
-            elif skipcondition3 in DBName:
+            elif skipcondition3 in HostAddress:
+                continue
+            elif skipcondition4 in HostAddress:
+                continue
+            elif skipcondition5 in HostAddress:
+                continue
+            elif skipcondition6 in DBName:
                 continue
             else:
                 hashvalue = parseSlow(SQLText, DBName, CtsStartTime)#返回hashvalue带入slowinfotodb函数，将数据写入slowlog
